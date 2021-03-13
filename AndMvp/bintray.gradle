@@ -1,0 +1,31 @@
+apply plugin: 'maven'
+
+uploadArchives{
+    repositories{
+        mavenDeployer{
+            //正式发布仓库
+            /*
+            repository(url:"http://localhost:8081/repository/jzman-releases/"){
+                authentication(userName:"liutao",password:"123456")
+            }*/
+
+            //快照版本的仓库
+            snapshotRepository(url:SNAPSHOT_REPOSITORY_URL){
+                authentication(userName:NEXUS_USERNAME,password:NEXUS_PASSWORD)
+            }
+
+            pom.project {
+                //版本号，如果是快照版本，其版本号后面应该添加-SNAPSHOT，否则不能正常识别上传
+                version '1.0.0-SNAPSHOT'
+                //一般写项目名称即可
+                artifactId 'MvpArm'
+                //组别，类似包名，保证唯一性
+                groupId 'com.zjmy.arms'
+                //打包格式
+                packaging 'aar'
+                //描述
+                description '扩展性良好的加载反馈页管理框架， 可添加自定义状态页面，如加载中、加载失败、无数据、网络超时等常用页面。'
+            }
+        }
+    }
+}
