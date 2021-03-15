@@ -1,4 +1,6 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
     compileSdkVersion 30
@@ -30,6 +32,10 @@ android {
         }
     }
 
+    lintOptions {
+        abortOnError false // 即使有报错也不会停止打包
+        checkReleaseBuilds false // 打包Release版本的时候也不进行Lint检测
+    }
 }
 
 dependencies {
@@ -37,3 +43,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 }
+
+
+apply from: 'bintray.gradle'

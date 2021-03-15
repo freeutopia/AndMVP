@@ -1,31 +1,91 @@
-apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
-uploadArchives{
-    repositories{
-        mavenDeployer{
-            //正式发布仓库
-            /*
-            repository(url:"http://localhost:8081/repository/jzman-releases/"){
-                authentication(userName:"liutao",password:"123456")
-            }*/
+def siteUrl = 'https://github.com/freeutopia'
+def gitUrl = "git@github.com:freeutopia/AndMVP.git"
 
-            //快照版本的仓库
-            snapshotRepository(url:SNAPSHOT_REPOSITORY_URL){
-                authentication(userName:NEXUS_USERNAME,password:NEXUS_PASSWORD)
-            }
+version = "1.0.0"
+group = "com.utopia"
 
-            pom.project {
-                //版本号，如果是快照版本，其版本号后面应该添加-SNAPSHOT，否则不能正常识别上传
-                version '1.0.0-SNAPSHOT'
-                //一般写项目名称即可
-                artifactId 'MvpArm'
-                //组别，类似包名，保证唯一性
-                groupId 'com.zjmy.arms'
-                //打包格式
+//加载资源
+Properties properties = new Properties()
+InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream() ;
+properties.load( inputStream )
+
+
+bintray {
+    user =  properties.getProperty('bintray.user')
+    key = properties.getProperty('bintray.apiKey')
+
+    println user
+    pkg {
+        repo = 'utopia'
+        name = "mvp"
+        licenses = ["Apache-2.0"]
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        publish = true // 是否是公开项目。
+
+        version {
+            name = version
+            desc = 'mvp基础架构'
+            released = new Date()
+            vcsTag = "v"+ version
+            //attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+        }
+    }
+    configurations = ['archives']
+}
+
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
                 packaging 'aar'
-                //描述
-                description '扩展性良好的加载反馈页管理框架， 可添加自定义状态页面，如加载中、加载失败、无数据、网络超时等常用页面。'
+                // Add your description here
+                name "mvp"
+                description 'mvp基础架构'
+                url siteUrl
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'free_utopia'
+                        name '刘涛'
+                        email 'free_utopia@163.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
             }
         }
     }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
 }

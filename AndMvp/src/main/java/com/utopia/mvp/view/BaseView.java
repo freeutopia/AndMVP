@@ -1,13 +1,11 @@
 package com.utopia.mvp.view;
 
-import android.util.SparseArray;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.utopia.mvp.listener.DataChangeListener;
-import com.utopia.mvp.presenter.ActivityPresenter;
-import com.utopia.mvp.presenter.IPresenter;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
@@ -17,16 +15,15 @@ import androidx.annotation.LayoutRes;
  * View delegate base class
  * 视图层代理的基类
  */
-public abstract class BaseView<P extends IPresenter> implements IView , DataChangeListener {
+public abstract class BaseView implements IView , DataChangeListener {
     private View rootView;
-    protected P p;
 
     /**
      * 加载根视图
      */
     public final View creatContentView(LayoutInflater inflater, ViewGroup parent) {
         rootView = inflater.inflate(getLayoutId(), parent);
-        init();
+        init(rootView.getContext());
         return rootView;
     }
 
@@ -38,14 +35,7 @@ public abstract class BaseView<P extends IPresenter> implements IView , DataChan
     /**
      * 初始化工作
      */
-    protected abstract void init();
-
-    /**
-     * 绑定presenter
-     */
-    public final void setPresenter(P presenter){
-        this.p = presenter;
-    }
+    protected abstract void init(Context context);
 
     @SuppressWarnings("unchecked")
     protected final <T extends View> T bind(@IdRes int id) {
@@ -58,6 +48,5 @@ public abstract class BaseView<P extends IPresenter> implements IView , DataChan
     @Override
     public void onDestory() {
         rootView = null;
-        p = null;
     }
 }

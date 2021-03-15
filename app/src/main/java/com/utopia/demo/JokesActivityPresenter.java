@@ -10,12 +10,12 @@ import com.utopia.mvp.presenter.ActivityPresenter;
 public class JokesActivityPresenter extends ActivityPresenter<JokesView, JokesModel> {
 
     @Override
-    public void inCreat(Bundle savedInstanceState) {
+    protected void inCreat(Bundle savedInstanceState) {
         getModelRef().fetch(1,10);
     }
 
     @Override
-    public void inDestory() {
+    protected void inDestory() {
 
     }
 
