@@ -1,8 +1,7 @@
 ## AndMVP简介
 An Android MVP Architecture Diagram Framwork.      
 在MVP模式下，View和Model是完全分离没有任何直接关联的(比如你在View层中完全不需要导Model的包，也不应该去关联它们)。
-![image](https://github.com/freeutopia/AndMVP/blob/main/art/mvp-uml.png)
-
+<div align="center"><img src="art/mvp-uml.png"/></div>
 ## 使用 
 
 #### 添加依赖配置  
