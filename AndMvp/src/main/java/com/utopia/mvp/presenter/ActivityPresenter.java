@@ -1,6 +1,8 @@
 package com.utopia.mvp.presenter;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.utopia.mvp.listener.DataChangeListener;
 import com.utopia.mvp.model.BaseModel;
@@ -10,7 +12,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
 public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         extends AppCompatActivity implements DataChangeListener {
@@ -28,11 +33,12 @@ public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         try {
             //通过反射泛型参数，构造view实例
             v = (V) ReflectUtils.getClass(actualTypeArguments[0]).newInstance();
+
             //填充ContentView
-            setContentView(v.creatContentView(getLayoutInflater(), null));
+            v.creatContentView(this, this::setContentView);
 
             //初始化Model，具体初始化方式由子类实现
-            m = (M) ReflectUtils.getClass(actualTypeArguments[0]).newInstance();
+            m = (M) ReflectUtils.getClass(actualTypeArguments[1]).newInstance();
             m.setCallback(this);
         } catch (Exception e) {
             e.printStackTrace();
