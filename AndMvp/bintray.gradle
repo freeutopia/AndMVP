@@ -2,9 +2,9 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 def siteUrl = 'https://github.com/freeutopia'
-def gitUrl = "git@github.com:freeutopia/AndMVP.git"
+def gitUrl = "https://github.com/freeutopia/AndMVP.git"
 
-version = "1.0.0"
+version = "1.0.1"
 group = "com.utopia"
 
 //加载资源

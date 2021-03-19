@@ -11,11 +11,7 @@ import com.utopia.mvp.view.BaseView;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
 public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         extends AppCompatActivity implements DataChangeListener {
