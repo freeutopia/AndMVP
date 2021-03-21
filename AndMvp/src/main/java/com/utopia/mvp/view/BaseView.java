@@ -4,12 +4,11 @@ import android.content.Context;
 import android.view.View;
 
 import com.utopia.mvp.listener.DataChangeListener;
-import com.utopia.mvp.listener.OnAsyncInflateListener;
+import com.utopia.mvp.utils.AsyncLayoutInflater;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
 /**
  * 将view加载的过程写在抽象类，做到代码复用。
@@ -22,19 +21,13 @@ public abstract class BaseView implements IView , DataChangeListener {
     /**
      * 加载根视图
      */
-    public final void creatContentView(@NonNull Context context,@NonNull OnAsyncInflateListener callback) {
-        new AsyncLayoutInflater(context).inflate(getLayoutId(), null, (view, resid, parent1) -> {
+    public final void creatContentView(@NonNull Context context,@NonNull AsyncLayoutInflater.OnInflateFinishedListener callback) {
+        new AsyncLayoutInflater(context).inflate(getLayoutId(), null, view -> {
             rootView = view;
             init(context);
-            callback.finished(view);
+            callback.onInflateFinished(view);
         });
     }
-
-/*    public final View creatContentView(LayoutInflater inflater, ViewGroup parent) {
-        rootView = inflater.inflate(getLayoutId(), parent);
-        init(rootView.getContext());
-        return rootView;
-    }*/
 
     /**
      * 返回根视图的id,提供给继承者使用
@@ -47,7 +40,7 @@ public abstract class BaseView implements IView , DataChangeListener {
     protected abstract void init(Context context);
 
     @SuppressWarnings("unchecked")
-    protected final <T extends View> T bind(@IdRes int id) {
+    protected final <T extends View> T findViewById(@IdRes int id) {
         return (T) rootView.findViewById(id);
     }
 

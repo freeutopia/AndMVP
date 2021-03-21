@@ -14,10 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
 public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         extends AppCompatActivity implements DataChangeListener {
@@ -32,15 +29,19 @@ public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         ParameterizedType parameterizedType = (ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass());
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
 
+        //通过反射泛型参数，构造view实例
         try {
-            //通过反射泛型参数，构造view实例
             V view = (V) ReflectUtils.getClass(actualTypeArguments[0]).newInstance();
             //填充ContentView
             view.creatContentView(this, this::setContentView);
             //避免内存泄漏，将view加入到软引用队列
             vRef = new SoftReference<>((V) view);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
+        try {
             //初始化Model，具体初始化方式由子类实现
             M model = (M) ReflectUtils.getClass(actualTypeArguments[1]).newInstance();
             model.setCallback(this);
