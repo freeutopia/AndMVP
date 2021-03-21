@@ -8,6 +8,8 @@ import com.utopia.mvp.listener.DataChangeListener;
 import com.utopia.mvp.model.BaseModel;
 import com.utopia.mvp.utils.ReflectUtils;
 import com.utopia.mvp.view.BaseView;
+
+import java.lang.ref.SoftReference;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -20,8 +22,8 @@ import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         extends AppCompatActivity implements DataChangeListener {
 
-    private V v;//View 层
-    private M m;//Model 层
+    private SoftReference<V> vRef;//View 层
+    private SoftReference<M> mRef;//Model 层
 
     @Override
     @SuppressWarnings("unchecked")
@@ -32,14 +34,18 @@ public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
 
         try {
             //通过反射泛型参数，构造view实例
-            v = (V) ReflectUtils.getClass(actualTypeArguments[0]).newInstance();
-
+            V view = (V) ReflectUtils.getClass(actualTypeArguments[0]).newInstance();
             //填充ContentView
-            v.creatContentView(this, this::setContentView);
+            view.creatContentView(this, this::setContentView);
+            //避免内存泄漏，将view加入到软引用队列
+            vRef = new SoftReference<>((V) view);
+
 
             //初始化Model，具体初始化方式由子类实现
-            m = (M) ReflectUtils.getClass(actualTypeArguments[1]).newInstance();
-            m.setCallback(this);
+            M model = (M) ReflectUtils.getClass(actualTypeArguments[1]).newInstance();
+            model.setCallback(this);
+            //避免内存泄漏，将model加入到软引用队列
+            mRef = new SoftReference<>((M) model);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,29 +58,37 @@ public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
     /**
      * 获取viwe的引用,若view 已被回收，则抛出异常
      */
-    protected final V getViewRef() {
-        return v;
+    protected final SoftReference<V> viewRef() {
+        return vRef;
     }
 
     /**
      * 获取model的引用,若model 已被回收，则抛出异常
      */
-    protected final M getModelRef() {
-        return m;
+    protected final SoftReference<M> modelRef() {
+        return mRef;
     }
 
     @Override
     protected final void onDestroy() {
         //销毁view
-        if (v != null) {
-            v.onDestory();
-            v = null;
+        if (vRef != null) {
+            V view = vRef.get();
+            if (view != null) {
+                view.onDestory();
+                vRef.clear();
+            }
+            vRef = null;
         }
 
         //销毁model
-        if (m != null) {
-            m.onDestory();
-            m = null;
+        if (mRef != null) {
+            M model = mRef.get();
+            if (model != null) {
+                model.onDestory();
+                mRef.clear();
+            }
+            mRef = null;
         }
 
         inDestory();
