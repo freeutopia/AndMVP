@@ -8,7 +8,7 @@ An Android MVP Architecture Diagram Framwork.
   
 ```
 dependencies {
-    implementation 'com.utopia:AndMVP:1.0.1'
+    implementation 'com.utopia:AndMVP:1.0.2'
 }
 ```  
 

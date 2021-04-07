@@ -4,7 +4,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 def siteUrl = 'https://github.com/freeutopia'
 def gitUrl = "https://github.com/freeutopia/AndMVP.git"
 
-version = "1.0.1"
+version = "1.0.2"
 group = "com.utopia"
 
 //加载资源

@@ -31,7 +31,10 @@ public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
             v = (V) ReflectUtils.getClass(actualTypeArguments[0]).newInstance();
 
             //填充ContentView
-            v.creatContentView(this, this::setContentView);
+            v.creatContentView(this, view->{
+                setContentView(view);
+                addEventListener();
+            });
 
             //初始化Model，具体初始化方式由子类实现
             m = (M) ReflectUtils.getClass(actualTypeArguments[1]).newInstance();
@@ -43,6 +46,8 @@ public abstract class ActivityPresenter<V extends BaseView, M extends BaseModel>
         //view 和 model初始化成功后，开始处理onCreate代理方法inCreat
         inCreat(savedInstanceState);
     }
+
+    protected void addEventListener(){}
 
 
     /**
