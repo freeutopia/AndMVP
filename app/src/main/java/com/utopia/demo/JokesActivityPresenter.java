@@ -3,15 +3,17 @@ package com.utopia.demo;
 import androidx.annotation.NonNull;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.utopia.mvp.presenter.ActivityPresenter;
 
 public class JokesActivityPresenter extends ActivityPresenter<JokesView, JokesModel> {
+    private int indexPage = 1;
 
     @Override
     protected void inCreat(Bundle savedInstanceState) {
-        getModelRef().fetch(1,10);
+        modelRef().get().fetch(1,10);
     }
 
     @Override
@@ -21,11 +23,15 @@ public class JokesActivityPresenter extends ActivityPresenter<JokesView, JokesMo
 
     @Override
     public void onError(Throwable e) {
-        getViewRef().onError(e);
+        viewRef().get().onError(e);
     }
 
     @Override
     public <T> void onSuccess(T result) {
-        runOnUiThread(()-> getViewRef().onSuccess(result));
+        runOnUiThread(()-> viewRef().get().onSuccess(result));
+    }
+
+    public void refresh(View view) {
+        modelRef().get().fetch(++indexPage,10);
     }
 }

@@ -23,7 +23,6 @@ public class JokesView extends BaseView {
     @Override
     public void init(Context context) {
         RecyclerView recyclerView = findViewById(R.id.rv_content);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         mAdapter = new JokesAdapter();
         recyclerView.setAdapter(mAdapter);
